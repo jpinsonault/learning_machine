@@ -5,7 +5,7 @@ def main():
 	comp = Computer()
 
 	comp.load_program([
-		["load", [3, "4"]],
+		["load", ["3", "4"]],
 		["load", [5, "2"]],
 		["add", ["1", "2", "1"]],
 		["dec", ["4"]],
