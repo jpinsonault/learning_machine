@@ -19,14 +19,18 @@ class Computer(object):
         self.pc = 0
 
     def run_program(self):
-        while self.pc < len(self.program):
-            instruction, operands = self.program[self.pc]
+        try:
+            while self.pc < len(self.program):
+                instruction, operands = self.program[self.pc]
 
-            function = getattr(self, instruction)
-            # print("{}: {}".format(instruction, operands))
-            function(*operands)
+                function = getattr(self, instruction)
+                # print("{}: {}".format(instruction, operands))
+                function(*operands)
 
-            self.pc += 1
+                self.pc += 1
+        except IndexError, e:
+            print("Jumped out of program")
+        
             
     def dereference(self, variable):
         if isinstance(variable, string_types):
@@ -81,8 +85,11 @@ class Computer(object):
     @accepts("any")
     def jump(self, distance):
         distance_ = self.dereference(distance)
+        
         # -1 becuase the pc will increment after this instruction anyways
         self.pc += (distance_ - 1)
+        if self.pc < 0 or self.pc > len(self.program):
+            raise IndexError
 
     @accepts("register", "any")
     def jump_if_zero(self, location, distance):
