@@ -13,6 +13,7 @@ class Computer(object):
         self.program = []
         # Program counter
         self.pc = 0
+        self.status = {}
 
     def load_program(self, program):
         self.program = program
@@ -37,6 +38,10 @@ class Computer(object):
             return self.memory[variable]
         else:
             return variable
+
+    def set_status(self, **kwargs):
+        for arg, value in kwargs.items():
+            self.status[arg] = value
 
     @accepts("register")
     def inc(self, location):
@@ -100,7 +105,7 @@ class Computer(object):
     @accepts("register", "any")
     def jump_if_pos(self, location, distance):
         distance_ = self.dereference(distance)
-        if self.dereference(location) >= 0:
+        if self.dereference(location) > 0:
             self.jump(distance_)
 
     @accepts("register", "any")

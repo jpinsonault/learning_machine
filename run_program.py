@@ -18,10 +18,20 @@ def main():
     ])
 
 
+    program = [
+        ["load",         [3, "4"]],
+        ["load",         [5, "2"]],
+        ["load",         [-3, "3"]],
+        ["add",          ["1", "2", "1"]],
+        ["dec",          [4]],
+        ["jump_if_zero", ["4", 2]],
+        ["jump",         ["3"]],
+        ["print_mem",    ["1"]],
+    ]
 
     generator = Generator()
 
-    program = [generator.random() for _ in range(50)]
+    # program = [generator.random() for _ in range(10)]
     # program = [
     #     ['multiply', [90, 70, '7']],
     #     ['nop', []],
