@@ -23,7 +23,7 @@ class Computer(object):
             instruction, operands = self.program[self.pc]
 
             function = getattr(self, instruction)
-            print("{}: {}".format(instruction, operands))
+            # print("{}: {}".format(instruction, operands))
             function(*operands)
 
             self.pc += 1

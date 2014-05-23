@@ -24,11 +24,9 @@ def accepts(*types):
                 for expected_type, arg in izip(types, args[1:]):
                     if not isinstance(arg, type_map[expected_type]):
                         valid = False
-                        msg = "{} not {} in '{}' instruction".format(arg, expected_type, f.__name__)
-                        break
-
-                if not valid:
-                    raise TypeError, msg
+                        msg = "\n>>> PC: {}, {}{}\n".format(args[0].pc, f.__name__, args[1:])
+                        msg += ">>> {} {} should be of type '{}'".format(type(arg), arg, expected_type)
+                        raise TypeError, msg
 
                 return f(*args)
             newf.__name__ = f.__name__
