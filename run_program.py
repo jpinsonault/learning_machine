@@ -5,9 +5,13 @@ def main():
 	comp = Computer()
 
 	comp.load_program([
-		["add", [5, 2, "1"]],
-		["move", ["1", "2"]],
-		["print_mem", ["2"]],
+		["load", [3, "4"]],
+		["load", [5, "2"]],
+		["add", ["1", "2", "1"]],
+		["dec", ["4"]],
+		["jump_if_zero", ["4", 2]],
+		["jump", [-3]],
+		["print_mem", ["1"]],
 	])
 
 	comp.run_program()
