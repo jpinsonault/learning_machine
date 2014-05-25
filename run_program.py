@@ -7,14 +7,13 @@ def main():
     comp = Computer()
 
     program = [
-        ["load",         [255, "4"]],
-        ["load",         [1, "2"]],
+        ["load",         [32, "4"]],
+        ["inc",          ["4"]],
+        ["print_char",   ["4"]],
         ["add",          ["1", "2", "1"]],
-        ["dec",          ["4"]],
-        ["print_char",   ["1"]],
-        ["jump_if_neg",  ["4", 2]],
+        ["jump_if_eq",   ["4", 126, 2]],
         ["jump",         [-4]],
-        ["print_mem",    ["1"]],
+        ["nop", 		 []],
     ]
 
     generator = Generator()

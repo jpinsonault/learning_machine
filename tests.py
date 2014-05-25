@@ -208,6 +208,34 @@ class TestInstructions(unittest.TestCase):
         self.failUnlessEqual(self.computer.memory['3'].value, 2)
         self.failUnlessEqual(self.computer.memory['2'].value, 1)
 
+    def test_jump_if_eq_on_equal(self):
+        self.computer.load_program([
+            ['load', [5, '1']],
+            ['load', [5, '2']],
+            ['jump_if_eq', ['1', '2', 2]],
+            ['load', [1, '3']], # Should never run
+            ['load', [2, '4']],
+        ])
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.memory['4'].value, 2)
+        self.failIfEqual(self.computer.memory['3'].value, 1)
+
+    def test_jump_if_eq_on_not_equal(self):
+        self.computer.load_program([
+            ['load', [5, '1']],
+            ['load', [4, '2']],
+            ['jump_if_eq', ['1', '2', 2]],
+            ['load', [1, '3']], # Should run
+            ['load', [2, '4']],
+        ])
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.memory['4'].value, 2)
+        self.failUnlessEqual(self.computer.memory['3'].value, 1)
+
+
+
 class TestProgramCounter(unittest.TestCase):
     def setUp(self):
         self.computer = Computer()
