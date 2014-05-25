@@ -110,6 +110,45 @@ class TestInstructions(unittest.TestCase):
 
 		self.failUnlessEqual(self.computer.memory['1'].value, 3)
 
+	def test_bit_or(self):
+		self.computer.load_program([
+			['load', [0b010101, '1']],
+			['load', [0b011111, '2']],
+			['bit_or', ['1', '2']],
+		])
+		self.computer.run_program()
+
+		self.failUnlessEqual(self.computer.memory['1'].value, 0b011111)
+
+	def test_bit_and(self):
+		self.computer.load_program([
+			['load', [0b010101, '1']],
+			['load', [0b011111, '2']],
+			['bit_and', ['1', '2']],
+		])
+		self.computer.run_program()
+
+		self.failUnlessEqual(self.computer.memory['1'].value, 0b010101)
+
+	def test_complement(self):
+		self.computer.load_program([
+			['load', [0b010101, '1']],
+			['complement', ['1']],
+		])
+		self.computer.run_program()
+
+		self.failUnlessEqual(self.computer.memory['1'].value, ~0b010101)
+
+	def test_bit_xor(self):
+		self.computer.load_program([
+			['load', [0b010101, '1']],
+			['load', [0b011111, '2']],
+			['bit_xor', ['1', '2']],
+		])
+		self.computer.run_program()
+
+		self.failUnlessEqual(self.computer.memory['1'].value, 0b010101 ^ 0b011111)
+
 	def test_jump(self):
 		self.computer.load_program([
 			['jump', [2]],

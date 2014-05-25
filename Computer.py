@@ -84,6 +84,25 @@ class Computer(object):
     def shift_right(self, location):
         self.memory[location].value >>= 1
 
+    @accepts("register", "any")
+    def bit_or(self, location, mask):
+        mask_ = self.dereference(mask)
+        self.memory[location].value |= mask_
+
+    @accepts("register", "any")
+    def bit_and(self, location, mask):
+        mask_ = self.dereference(mask)
+        self.memory[location].value &= mask_
+
+    @accepts("register", "any")
+    def complement(self, location):
+        self.memory[location].value = ~self.memory[location].value
+
+    @accepts("register", "any")
+    def bit_xor(self, location, mask):
+        mask_ = self.dereference(mask)
+        self.memory[location].value ^= mask_
+
     def nop(self):
         pass
 
