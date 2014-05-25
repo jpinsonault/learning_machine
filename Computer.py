@@ -105,12 +105,6 @@ class Computer(object):
             raise IndexError
 
     @accepts("register", "any")
-    def jump_if_zero(self, location, distance):
-        distance_ = self.dereference(distance)
-        if self.dereference(location) == 0:
-            self.jump(distance_)
-
-    @accepts("register", "any")
     def jump_if_pos(self, location, distance):
         distance_ = self.dereference(distance)
         if self.dereference(location) > 0:

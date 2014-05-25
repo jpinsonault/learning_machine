@@ -6,25 +6,13 @@ from pprint import pprint
 def main():
     comp = Computer()
 
-    comp.load_program([
-        ["load",         [3, "4"]],
-        ["load",         [5, "2"]],
-        ["load",         [-3, "3"]],
-        ["add",          ["1", "2", "1"]],
-        ["dec",          ["4"]],
-        ["jump_if_zero", ["4", 2]],
-        ["jump",         ["3"]],
-        ["print_mem",    ["1"]],
-    ])
-
-
     program = [
-        ["load",         [3, "4"]],
+        ["load",         [2, "4"]],
         ["load",         [5, "2"]],
         ["load",         [-3, "3"]],
         ["add",          ["1", "2", "1"]],
         ["dec",          ["4"]],
-        ["jump_if_zero", ["4", 2]],
+        ["jump_if_neg", ["4", 2]],
         ["jump",         ["3"]],
         ["print_mem",    ["1"]],
     ]
