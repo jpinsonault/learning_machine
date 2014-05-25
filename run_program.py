@@ -7,13 +7,13 @@ def main():
     comp = Computer()
 
     program = [
-        ["load",         [2, "4"]],
-        ["load",         [5, "2"]],
-        ["load",         [-3, "3"]],
+        ["load",         [255, "4"]],
+        ["load",         [1, "2"]],
         ["add",          ["1", "2", "1"]],
         ["dec",          ["4"]],
-        ["jump_if_neg", ["4", 2]],
-        ["jump",         ["3"]],
+        ["print_char",   ["1"]],
+        ["jump_if_neg",  ["4", 2]],
+        ["jump",         [-4]],
         ["print_mem",    ["1"]],
     ]
 

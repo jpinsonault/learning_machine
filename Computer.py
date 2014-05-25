@@ -135,6 +135,15 @@ class Computer(object):
         if self.dereference(location) < 0:
             self.jump(distance_)
 
+    @accepts("register", "any", "any")
+    def jump_if_eq(self, first, second, distance):
+        first_ = self.dereference(first)
+        second_ = self.dereference(second)
+
+        distance_ = self.dereference(distance)
+        if first_ == second_:
+            self.jump(distance_)
+
     @accepts("register")
     def print_mem(self, location):
         """Prints the memory location as an int"""
