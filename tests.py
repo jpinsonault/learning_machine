@@ -234,6 +234,41 @@ class TestInstructions(unittest.TestCase):
         self.failUnlessEqual(self.computer.memory['4'].value, 2)
         self.failUnlessEqual(self.computer.memory['3'].value, 1)
 
+    def test_push(self):
+        self.computer.load_program([
+            ['load', [5, '1']],
+            ['push', ['1']],
+            ['push', [1]],
+        ])
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.stack[0], 5)
+        self.failUnlessEqual(self.computer.stack[1], 1)        
+
+
+    def test_pop_with_non_empty_stack(self):
+        self.computer.load_program([
+            ['load', [5, '1']],
+            ['push', ['1']],
+            ['push', [1]],
+            ['pop', "3"],
+            ['pop', "4"],
+        ])
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.memory['4'].value, 5)
+        self.failUnlessEqual(self.computer.memory['3'].value, 1)
+
+    def test_pop_with_empty_stack(self):
+        self.computer.load_program([
+            ['pop', "3"],
+            ['pop', "4"],
+        ])
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.memory['4'].value, 0)
+        self.failUnlessEqual(self.computer.memory['3'].value, 0)       
+
 
 
 class TestProgramCounter(unittest.TestCase):
@@ -251,6 +286,38 @@ class TestProgramCounter(unittest.TestCase):
         self.computer.run_program()
 
         self.failUnlessEqual(self.computer.pc, 4)
+
+
+class TestInputLoading(unittest.TestCase):
+    def setUp(self):
+        self.computer = Computer()
+
+    def test_inputs_loaded(self):
+        self.computer.load_program([
+            ['load', [-1, '1']],
+            ['jump_if_pos', ['1', 2]],
+            ['load', [1, '2']], # Should run
+            ['load', [2, '3']],
+        ], [5, 4, 3, 2, 1])
+
+        self.failUnlessEqual(self.computer.memory["0"].value, 5)
+        self.failUnlessEqual(self.computer.memory["4"].value, 1)
+
+
+class TestOutputQueue(unittest.TestCase):
+    def setUp(self):
+        self.computer = Computer()
+
+    def test_queue_has_correct_values(self):
+        self.computer.load_program([
+            ['print_mem', ['0']],
+            ['print_char', ['0']],
+        ], [33])
+
+        self.computer.run_program()
+
+        self.failUnlessEqual(self.computer.output_queue[0], 33)
+        self.failUnlessEqual(self.computer.output_queue[1], '!')
 
 
 if __name__ == '__main__':

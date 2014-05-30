@@ -8,16 +8,25 @@ class Computer(object):
     def __init__(self):
         super(Computer, self).__init__()
         
-        self.memory = defaultdict(lambda: MemoryLocation())
+        self.reset_computer()
 
-        self.program = []
-        # Program counter
-        self.pc = 0
-        self.status = {}
-
-    def load_program(self, program):
+    def load_program(self, program, inputs=[]):
+        self.reset_computer()
         self.program = program
+
+        self.load_inputs(inputs)
+
+    def load_inputs(self, inputs):
+        for index, value in enumerate(inputs):
+            self.memory[str(index)].value = value
+
+    def reset_computer(self):
+        self.program = []
         self.pc = 0
+        self.stack = []
+        self.status = {}
+        self.memory = defaultdict(lambda: MemoryLocation())
+        self.output_queue = []
 
     def run_program(self):
         try:
@@ -29,9 +38,8 @@ class Computer(object):
                 function(*operands)
 
                 self.pc += 1
-        except IndexError, e:
+        except JumpedOutException, e:
             print("Jumped out of program")
-        
             
     def dereference(self, variable):
         if isinstance(variable, string_types):
@@ -40,8 +48,10 @@ class Computer(object):
             return variable
 
     def set_status(self, **kwargs):
-        for arg, value in kwargs.items():
-            self.status[arg] = value
+        pass
+
+    def output(self, value):
+        self.output_queue.append(value)
 
     @accepts("register")
     def inc(self, location):
@@ -94,7 +104,7 @@ class Computer(object):
         mask_ = self.dereference(mask)
         self.memory[location].value &= mask_
 
-    @accepts("register", "any")
+    @accepts("register")
     def complement(self, location):
         self.memory[location].value = ~self.memory[location].value
 
@@ -115,13 +125,29 @@ class Computer(object):
         self.memory[dest].value = value
 
     @accepts("any")
+    def push(self, value):
+        value_ = self.dereference(value)
+
+        self.stack.append(value_)
+
+    @accepts("register")
+    def pop(self, dest):
+        try:
+            value = self.stack.pop()
+        except IndexError, e:
+            value = 0
+
+        self.memory[dest].value = value
+
+
+    @accepts("any")
     def jump(self, distance):
         distance_ = self.dereference(distance)
         
         # -1 becuase the pc will increment after this instruction anyways
         self.pc += (distance_ - 1)
         if self.pc < 0 or self.pc > len(self.program):
-            raise IndexError
+            raise JumpedOutException
 
     @accepts("register", "any")
     def jump_if_pos(self, location, distance):
@@ -147,17 +173,25 @@ class Computer(object):
     @accepts("register")
     def print_mem(self, location):
         """Prints the memory location as an int"""
-        print(self.memory[location].value)
+        self.output(self.memory[location].value)
 
     @accepts("register")
     def print_char(self, location):
         """Chops off all by the first 8 bits and prints it as a char"""
         value = self.memory[location].value
-        print(chr(value & 0b11111111))
+        self.output(chr(value & 0b11111111))
 
     @accepts("register", "any")
     def print_string(self, location, length):
-        pass
+        length_ = self.dereference(length)
+        location_int = int(location)
+        output_string = []
+        for index in xrange(location_int, location_int + length_):
+            print(self.memory[str(index)])
+            output_string.append(chr(self.memory[str(index)].value))
+
+        self.output("".join(output_string))
+        # self.output("".join([chr(self.memory[str(index)]) for index in xrange(location_int, location_int + length_)]))
 
 
 class MemoryLocation(object):
@@ -193,4 +227,11 @@ class MemoryLocation(object):
         return str(self.value)
 
     def __repr__(self):
-        return self.__str__()
+        return "MemoryLocation(value={})".format(self.value)
+
+class JumpedOutException(Exception):
+    """Exception for when execution jumps out of the program memory"""
+    def __init__(self, error_string):
+        super(JumpedOutException, self).__init__(error_string)
+        self.error_string = error_string
+        

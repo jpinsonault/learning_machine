@@ -6,6 +6,7 @@ from pprint import pprint
 def main():
     comp = Computer()
 
+    # Print ascii chars
     program = [
         ["load",         [32, "4"]],
         ["inc",          ["4"]],
@@ -13,8 +14,20 @@ def main():
         ["add",          ["1", "2", "1"]],
         ["jump_if_eq",   ["4", 126, 2]],
         ["jump",         [-4]],
-        ["nop", 		 []],
+        ["nop",          []],
     ]
+
+    # Print ascii chars as string
+    program = [
+        ["load",         [32, "4"]],
+        ["inc",          ["4"]],
+        ["add",          ["1", "2", "1"]],
+        ["jump_if_eq",   ["4", 126, 2]],
+        ["jump",         [-3]],
+        ["print_string", ["4", 30]],
+    ]
+
+
 
     generator = Generator()
 
@@ -46,7 +59,8 @@ def main():
     comp.load_program(program)
     comp.run_program()
 
-    pprint(dict(comp.memory))
+    pprint(dict([key, location.value] for key, location in comp.memory.iteritems()))
+    pprint(comp.output_queue)
 
 
 if __name__ == '__main__':
