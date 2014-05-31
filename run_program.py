@@ -1,13 +1,34 @@
 from Computer import Computer
-from InstructionGenerator import Generator
+from Generation import Generation
+from Generation import ProgramResult
 from pprint import pprint
+
 
 
 def main():
     comp = Computer()
 
-    # Print ascii chars
-    program = [
+    done = False
+
+    successes = []
+    gen_number = 0
+
+    while not done:
+        if gen_number % 10 == 0:
+            print("Generation: {}".format(gen_number))
+        gen_number += 1
+        gen = Generation(10, [1,2,3,4,5])
+
+        gen.run_all()
+
+        successes += [result.program for result in gen.program_results if 3 in result.output]
+        if len(successes) > 1:
+            done = True
+
+    pprint(successes)
+
+def print_ascii_program():
+    return [
         ["load",         [32, "4"]],
         ["inc",          ["4"]],
         ["print_char",   ["4"]],
@@ -17,50 +38,12 @@ def main():
         ["nop",          []],
     ]
 
-    # Print ascii chars as string
-    program = [
-        ["load",         [32, "4"]],
-        ["inc",          ["4"]],
-        ["add",          ["1", "2", "1"]],
-        ["jump_if_eq",   ["4", 126, 2]],
-        ["jump",         [-3]],
-        ["print_string", ["4", 30]],
-    ]
 
+def run_program(program, inputs=[]):
+    run = ProgramResult(program, inputs)
+    run.run_program()
 
-
-    generator = Generator()
-
-    # program = [generator.random() for _ in range(10)]
-    # program = [
-    #     ['multiply', [90, 70, '7']],
-    #     ['nop', []],
-    #     ['jump', ['3']],
-    #     ['jump_if_pos', ['62', -1]],
-    #     ['load', [52, '5']],
-    #     ['inc', ['17']],
-    #     ['jump_if_zero', ['79', -99]],
-    #     ['nop', []],
-    #     ['print_mem', ['12']],
-    #     ['clear', ['67']],
-    #     ['divide', ['40', -78, '97']],
-    #     ['multiply', [-83, '4', '48']],
-    #     ['clear', ['20']],
-    #     ['load', [-93, '22']],
-    #     ['multiply', [-64, '51', '99']],
-    #     ['nop', []],
-    #     ['add', ['27', '50', '49']],
-    #     ['dec', ['5']],
-    #     ['nop', []],
-    #     ['jump', ['96']]
-    # ]
-
-    pprint(program)
-    comp.load_program(program)
-    comp.run_program()
-
-    pprint(dict([key, location.value] for key, location in comp.memory.iteritems()))
-    pprint(comp.output_queue)
+    print("Output: {}\nKilled?: {}\n".format(run.output, run.was_killed))
 
 
 if __name__ == '__main__':

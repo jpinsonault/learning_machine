@@ -3,6 +3,11 @@ from six import string_types
 from TypeChecking import accepts
 
 
+# 32bit max/min numbers
+MAX_INT = 2147483647
+MIN_INT = -2147483648
+
+
 class Computer(object):
     """An emulated computer with a simple instruction set"""
     def __init__(self):
@@ -27,10 +32,11 @@ class Computer(object):
         self.status = {}
         self.memory = defaultdict(lambda: MemoryLocation())
         self.output_queue = []
+        self.kill_signal = False
 
     def run_program(self):
         try:
-            while self.pc < len(self.program):
+            while self.pc < len(self.program) and not self.kill_signal:
                 instruction, operands = self.program[self.pc]
 
                 function = getattr(self, instruction)
@@ -39,7 +45,10 @@ class Computer(object):
 
                 self.pc += 1
         except JumpedOutException, e:
-            print("Jumped out of program")
+            pass
+
+    def kill_program(self):
+        self.kill_signal = True
             
     def dereference(self, variable):
         if isinstance(variable, string_types):
@@ -83,6 +92,9 @@ class Computer(object):
     def divide(self, first, second, dest):
         first_ = self.dereference(first)
         second_ = self.dereference(second)
+
+        if second_ == 0:
+            second_ = 1
 
         self.memory[dest].value = first_ / second_
 
@@ -201,10 +213,6 @@ class MemoryLocation(object):
         If treated as a byte, the 8 low order bits are used
     """
 
-    # 32bit max/min numbers
-    MAX_INT = 2147483647
-    MIN_INT = -2147483648
-
     def __init__(self, value=0):
         super(MemoryLocation, self).__init__()
         self.value = value
@@ -217,8 +225,8 @@ class MemoryLocation(object):
     def value(self, value):
         self._value = value
         # Make sure it doesn't go over or under the max/min values
-        self._value = min(self._value, self.MAX_INT)
-        self._value = max(self._value, self.MIN_INT)
+        self._value = min(self._value, MAX_INT)
+        self._value = max(self._value, MIN_INT)
 
     def as_byte(self):
         pass
@@ -231,7 +239,7 @@ class MemoryLocation(object):
 
 class JumpedOutException(Exception):
     """Exception for when execution jumps out of the program memory"""
-    def __init__(self, error_string):
+    def __init__(self, error_string=""):
         super(JumpedOutException, self).__init__(error_string)
         self.error_string = error_string
         

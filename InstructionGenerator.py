@@ -28,8 +28,6 @@ instructions = {
 }
 
 
-
-
 class Generator(object):
     """Generators random instructions
 
@@ -45,7 +43,10 @@ class Generator(object):
         super(Generator, self).__init__()
         self.program = program
 
-    def random(self):
+    def random_program(self, size):
+        return [self.random_instruction() for _ in xrange(size)]
+
+    def random_instruction(self):
         """Generate random instruction"""
         instruction, operand_templates = random.choice(instructions.items())
 
